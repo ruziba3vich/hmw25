@@ -1,0 +1,5 @@
+Uy vafiza
+Demo database ichidagi quyidagi SQL tuzing:
+Har bir product uchun categorysi bilan product_name, unit, price,
+category_name, description ustunlarini qaytarsin va faqat Beverages digan categoriya uchun bajarilsin
+Go da shu SQL code ni bajarib natijani chop eting
