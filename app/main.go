@@ -22,7 +22,7 @@ func main() {
 	}
 	defer db.Close()
 
-	dbNames := []string{"units", "categories", "products"}
+	dbNames := []string{"users", "units", "categories", "products"}
 
 	for _, dbName := range dbNames {
 		name := "../internal/db/" + dbName + ".sql"

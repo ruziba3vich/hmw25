@@ -2,9 +2,11 @@ package storage
 
 import (
 	"database/sql"
+
+	"github.com/ruziba3vich/e_commerce_db/internal/models"
 )
 
-func GetProductsByCategory(categoryName string, db *sql.DB) ([]ProductDTO, error) {
+func GetProductsByCategory(categoryName string, db *sql.DB) ([]models.ProductDTO, error) {
 	query := `
 	SELECT EXISTS (
 		SELECT 1
@@ -21,7 +23,14 @@ func GetProductsByCategory(categoryName string, db *sql.DB) ([]ProductDTO, error
 
 	if exists {
 		query = `
-			SELECT p.id, p.name, c.name AS category_name, p.price, u.name AS unit_name, p.description
+			SELECT
+				p.id,
+				p.name,
+				c.name AS category_name,
+				p.price,
+				u.name AS unit_name,
+				p.description,
+				p.number_of_product
 			FROM Products p 
 			INNER JOIN Categories c ON c.id = p.category_id
 			INNER JOIN Units u ON u.id = p.unit_id
@@ -35,10 +44,16 @@ func GetProductsByCategory(categoryName string, db *sql.DB) ([]ProductDTO, error
 		}
 		defer rows.Close()
 
-		var products []ProductDTO
+		var products []models.ProductDTO
 		for rows.Next() {
-			var product ProductDTO
-			err := rows.Scan(&product.Id, &product.Name, &product.Category, &product.Price, &product.Unit, &product.Description)
+			var product models.ProductDTO
+			err := rows.Scan(&product.Id,
+				&product.Name,
+				&product.Category,
+				&product.Price,
+				&product.Unit,
+				&product.Description,
+				&product.NumberOfProduct)
 			if err != nil {
 				// log.Println("came --------------")
 				return nil, err
@@ -47,14 +62,5 @@ func GetProductsByCategory(categoryName string, db *sql.DB) ([]ProductDTO, error
 		}
 		return products, nil
 	}
-	return []ProductDTO{}, nil
-}
-
-type ProductDTO struct {
-	Id          int    `json:"id"`
-	Name        string `json:"name"`
-	Category    string `json:"category"`
-	Price       int    `json:"price"`
-	Unit        string `json:"unit"`
-	Description string `json:"description"`
+	return []models.ProductDTO{}, nil
 }

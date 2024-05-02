@@ -1,0 +1,5 @@
+In the `storage`, in `BuyProducts` method of `User` struct, there is used transaction while performing
+the transaction which user extracts some number of products from the database and buys them all,
+in addition, there is used `Mutex`es too, because more than one customer might try to refer to the same
+product at the same moment, so we need to create a queue right there for customers to share the same
+objects;
