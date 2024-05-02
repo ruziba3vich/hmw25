@@ -24,10 +24,11 @@ func GetProductsByCategory(categoryName string, db *sql.DB) ([]ProductDTO, error
 			SELECT p.id, p.name, c.name AS category_name, p.price, u.name AS unit_name, p.description
 			FROM Products p 
 			INNER JOIN Categories c ON c.id = p.category_id
-			INNER JOIN Units u ON u.id = p.unit_id;
+			INNER JOIN Units u ON u.id = p.unit_id
+			WHERE c.name = $1;
 		`
 
-		rows, err := db.Query(query)
+		rows, err := db.Query(query, categoryName)
 		if err != nil {
 			// log.Println("came --------------")
 			return nil, err
