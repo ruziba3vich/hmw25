@@ -15,18 +15,21 @@ func GetProductsByCategory(categoryName string, db *sql.DB) ([]ProductDTO, error
 	row := db.QueryRow(query, categoryName)
 	var exists bool
 	if err := row.Scan(&exists); err != nil {
+		// log.Println("came --------------")
 		return nil, err
 	}
 
 	if exists {
 		query = `
-			SELECT p.id, p.name, c.name, p.price, u.name, p.description
-			FROM Products p INNER JOIN Categories c ON c.id = p.category_id
-			INNER JOIN Units u ON u.id = c.unit_id;
+			SELECT p.id, p.name, c.name AS category_name, p.price, u.name AS unit_name, p.description
+			FROM Products p 
+			INNER JOIN Categories c ON c.id = p.category_id
+			INNER JOIN Units u ON u.id = p.unit_id;
 		`
 
 		rows, err := db.Query(query)
 		if err != nil {
+			// log.Println("came --------------")
 			return nil, err
 		}
 		defer rows.Close()
@@ -34,8 +37,9 @@ func GetProductsByCategory(categoryName string, db *sql.DB) ([]ProductDTO, error
 		var products []ProductDTO
 		for rows.Next() {
 			var product ProductDTO
-			err := rows.Scan(product.Id, product.Name, product.Category, product.Price, product.Unit, product.Description)
+			err := rows.Scan(&product.Id, &product.Name, &product.Category, &product.Price, &product.Unit, &product.Description)
 			if err != nil {
+				// log.Println("came --------------")
 				return nil, err
 			}
 			products = append(products, product)

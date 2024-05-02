@@ -38,7 +38,7 @@ func main() {
 		}
 	}
 
-	router.POST("/getProduct/:productName", func(c *gin.Context) {
+	router.GET("/getProduct/:productName", func(c *gin.Context) {
 		productName := c.Param("productName")
 		handlers.GetProductsByCategory(c, productName, db)
 	})
