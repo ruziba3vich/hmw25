@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"database/sql"
 	"fmt"
 	"log"
@@ -10,6 +9,7 @@ import (
 	"github.com/ruziba3vich/e_commerce_db/internal/handlers"
 
 	"github.com/gin-gonic/gin"
+	_ "github.com/lib/pq"
 )
 
 func main() {
@@ -22,7 +22,7 @@ func main() {
 	}
 	defer db.Close()
 
-	dbNames := []string{}
+	dbNames := []string{"units", "categories", "products"}
 
 	for _, dbName := range dbNames {
 		name := "../internal/db/" + dbName + ".sql"
@@ -32,21 +32,15 @@ func main() {
 		}
 
 		_, err = db.Exec(string(sqlFile))
+		fmt.Println(string(sqlFile))
 		if err != nil {
 			log.Fatal(err)
 		}
 	}
 
-	router.POST("/twit", func(c *gin.Context) {
-		handlers.CreateTwit(c, db)
-	})
-
-	router.POST("/comment/:id", func(c *gin.Context) {
-		handlers.Comment(c, db, context.Background())
-	})
-
-	router.POST("/", func(c *gin.Context) {
-		handlers.LoadTwits(c, db)
+	router.POST("/getProduct/:productName", func(c *gin.Context) {
+		productName := c.Param("productName")
+		handlers.GetProductsByCategory(c, productName, db)
 	})
 
 	address := "localhost:7777"
