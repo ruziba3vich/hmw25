@@ -4,7 +4,10 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"net/http"
 	"os"
+	"strconv"
+	"sync"
 
 	"github.com/ruziba3vich/e_commerce_db/internal/handlers"
 
@@ -38,9 +41,20 @@ func main() {
 		}
 	}
 
+	var mtx *sync.Mutex
+
 	router.GET("/getProduct/:productName", func(c *gin.Context) {
 		productName := c.Param("productName")
 		handlers.GetProductsByCategory(c, productName, db)
+	})
+
+	router.POST("/getProduct/:userId", func(c *gin.Context) {
+		userId, err := strconv.Atoi(c.Param("userId"))
+		if err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": err})
+			return
+		}
+		handlers.BuyProduct(c, db, userId, mtx)
 	})
 
 	address := "localhost:7777"
